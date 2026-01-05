@@ -1,100 +1,68 @@
 <?php
 
-// BASE CLASS: Vehicle
-class Vehicle
-{
-    // Public properties can be accessed directly (though typically we prefer protected/private)
+
+class Vehicle {
+
     public $make;
     public $model;
 
-    // Encapsulation: $speed is protected. 
-    protected $speed;
+    // Encapsulation: protected → child class access 
+    protected $speed = 0;
 
-    // Constructor to initialize the object
-    public function __construct($make, $model)
-    {
-        // Using $this to refer to the current object's properties
-        $this->make = $make;
+    // Constructor
+    public function __construct($make, $model, $speed = 0) {
+        $this->make = $make;   
         $this->model = $model;
-        $this->speed = 0; // Default speed
+        $this->speed = $speed;
     }
 
-    public function getSpeed()
-    {
+    // Getter method (encapsulation)
+    public function getSpeed() {
         return $this->speed;
     }
 
-    public function setSpeed($speed)
-    {
-        if ($speed < 0) {
-            echo "Error: Speed cannot be negative.<br>";
-        } else {
-            // Using $this to assign the new value to the property
+    // Setter method (encapsulation)
+    public function setSpeed($speed) {
+        if ($speed >= 0) {
             $this->speed = $speed;
         }
     }
 
-    
-    public function describe()
-    {
-        return "This is a {$this->make} {$this->model} moving at {$this->speed} km/h.";
-    }
-
-    
-    public function startEngine()
-    {
-        return "Engine started generically.";
-    }
-}
-
-// SUBCLASS: Car
-// Inheritance: Car inherits properties and methods from Vehicle.
-class Car extends Vehicle
-{
-    private $hasSunroof;
-
-    public function __construct($make, $model, $hasSunroof = false)
-    {
-        // Call the parent constructor to ensure base properties are set up
-        parent::__construct($make, $model);
-        $this->hasSunroof = $hasSunroof;
-    }
-
-    
-    public function startEngine()
-    {
-        return "Car engine started with a push button!";
-    }
-
-    
-    public function describe()
-    {
-        // Using parent::describe() to get the base description
-        $baseDescription = parent::describe();
-
-        $sunroofStatus = $this->hasSunroof ? "It has a sunroof." : "It does not have a sunroof.";
-
-        // Extending the result
-        return $baseDescription . " " . $sunroofStatus;
+    // Method to override later
+    public function showDetails() {
+        return "Vehicle: {$this->make} {$this->model}, Speed: {$this->speed} km/h";
     }
 }
 
 
 
-$myCar = new Car("Toyota", "Camry", true);
+
+class Car extends Vehicle {
+
+    // Simple overriding 
+    public function showDetails() {
+
+        // parent::showDetails() 
+        $parentOutput = parent::showDetails();
+
+        // parent output-(extended overriding)
+        return $parentOutput . " | Type: Car";
+    }
+
+    // Overriding (without parent::) → Fully Replace Example
+    public function startCar() {
+        return "Car Started!"; 
+    }
+}
 
 
-// We cannot do $myCar->speed = 50; because speed is protected.
+$car = new Car("Toyota", "Corolla", 60);
 
-$myCar->setSpeed(60);
+// Encapsulation → safe access
+$car->setSpeed(80);
 
-echo "<p><strong>Description:</strong> " . $myCar->describe() . "</p>";
-
-// Simple Overriding
-// Calling startEngine(), which is completely replaced in Car.
-echo " " . $myCar->startEngine() . "</p>";
-
-// 5. Accessing public properties inherited from Vehicle
-echo " Make: {$myCar->make}, Model: {$myCar->model}</p>";
+echo $car->showDetails(); 
+echo "<br>";
+echo $car->startCar();
 
 ?>
